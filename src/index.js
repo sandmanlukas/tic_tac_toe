@@ -12,9 +12,23 @@ function Square(props){
   
   class Board extends React.Component {
 
+    createBoard (row,col) {
+      let cellCounter = 0;
+      const board = [];
+      for (let i=0; i<row; i++){
+        const board_row = [];
+        for (let j=0; j<col; j++){
+          board_row.push(this.renderSquare(cellCounter++));
+        }
+        board.push(<div key={i} className='board-row'>{board_row}</div>);
+      }
+      return board;
+    }
+
     renderSquare(i) {
       return (
-        <Square 
+        <Square
+            key={i} 
             value={this.props.squares[i]}
             onClick= {() => this.props.onClick(i)}
             />
@@ -22,23 +36,12 @@ function Square(props){
     }
   
     render() {
+      
+
+
       return (
         <div>
-          <div className="board-row">
-            {this.renderSquare(0)}
-            {this.renderSquare(1)}
-            {this.renderSquare(2)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(3)}
-            {this.renderSquare(4)}
-            {this.renderSquare(5)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(6)}
-            {this.renderSquare(7)}
-            {this.renderSquare(8)}
-          </div>
+          {this.createBoard(3,3)}
         </div>
       );
     }
@@ -63,10 +66,6 @@ function Square(props){
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
-        //const new_row = this.state.row.slice();
-        //const new_col = this.state.col.slice();
-
-        
 
         if (calculateWinner(squares) || squares[i]){
             return;
@@ -81,9 +80,6 @@ function Square(props){
             }]),
             stepNumber: history.length,
             xIsNext: !this.state.xIsNext,
-            // this doesnt work, inf array
-            //row: new_row.concat([~~(i / 3) + 1]),
-            //col: new_col.concat([i % 3 + 1]),
         }); 
     }
 
@@ -100,24 +96,21 @@ function Square(props){
       const current = history[this.state.stepNumber];
       const winner = calculateWinner(current.squares);
 
+      console.log(this.state.stepNumber);
       const moves = history.map((step, move) => {
-          //TODO: fix so that current move is bolded only, atm all buttons are bolded.
           const currentCol = step['col'];
           const currentRow = step['row'];
           const desc = move ?
           'Go to move #' + move + ' (' + currentCol + ', ' + currentRow +  ')' : 'Go to game start';
-          const boldDesc = <strong>{desc}</strong>;
           return (
               <li key={move}>
                   <button onClick={() => this.jumpTo(move)}>
-                      {boldDesc}
+                      {desc}
                   </button>
               </li>
           )
       })
-      
-    
-
+      moves[this.state.stepNumber] = <strong key={this.state.stepNumber}>{moves[this.state.stepNumber]}</strong>;
       let status;
 
       if (winner){
