@@ -1,5 +1,5 @@
 body {
-    font: 14px "Century Gothic", Futura, sans-serif;
+    font: 20px "Century Gothic", Futura, sans-serif;
     margin: 20px;
   }
   
@@ -30,6 +30,18 @@ body {
     padding: 0;
     text-align: center;
     width: 34px;
+  }
+
+  .square-highlight{
+    background-color: green;
+  }
+
+  .button {
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .button-highlight{
+    background-color: green;
   }
   
   .square:focus {

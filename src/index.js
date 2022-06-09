@@ -122,7 +122,7 @@ function Square(props){
 
           return (
               <li key={move}>
-                  <button className={`${boldButton}`} onClick={() => this.jumpTo(move)}>
+                  <button className={`${boldButton} button`} onClick={() => this.jumpTo(move)}>
                       {`${desc} ${rowColText}`}
                   </button>
               </li>
