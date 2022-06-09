@@ -46,24 +46,25 @@ function Square(props){
       );
     }
   }
+
+  const newGameState = {
+    history: [{ 
+      squares: Array(9).fill(null),
+    }],
+    currentStepNumber: 0,
+    xIsNext: true,
+  };
+  
   
   class Game extends React.Component {
 
     constructor(props){
         super(props);
-        this.state = {
-            history: [{
-                squares: Array(9).fill(null),
-            }],
-            stepNumber: 0,
-            xIsNext: true,
-            row: [],
-            col: [],
-        };
+        this.state = newGameState;
     }
 
     handleClick(i){
-        const history = this.state.history.slice(0, this.state.stepNumber + 1);
+        const history = this.state.history.slice(0, this.state.currentStepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
 
@@ -77,35 +78,45 @@ function Square(props){
                 squares: squares,
                 row: (~~(i / 3) + 1),
                 col: i % 3 + 1,
+                stepNumber: history.length,
             }]),
-            stepNumber: history.length,
+            currentStepNumber: history.length,
             xIsNext: !this.state.xIsNext,
         }); 
     }
 
     jumpTo(step){
         this.setState({
-            stepNumber: step,
+            currentStepNumber: step,
             xIsNext: (step % 2) === 0,
         });
+    }
+
+    sortMoves(){
+      this.setState({
+        history: this.state.history.reverse(),
+      });
+    }
+    newGame(){
+      this.setState(newGameState)
     }
 
     render() {
 
       const history = this.state.history;
-      const current = history[this.state.stepNumber];
+      const current = history[this.state.currentStepNumber];
       const winner = calculateWinner(current.squares);
-
-      console.log(this.state.stepNumber);
       const moves = history.map((step, move) => {
-          const currentCol = step['col'];
-          const currentRow = step['row'];
-          const desc = move ?
-          'Go to move #' + move + ' (' + currentCol + ', ' + currentRow +  ')' : 'Go to game start';
+          const sortedCol = step['col'] ? step['col']: '';
+          const sortedRow= step['row'] ? step['row']: '';
+          const rowColText = sortedCol ? `(${sortedCol}, ${sortedRow})`: '';
+          const desc = step.stepNumber ?
+          `Go to move #${step.stepNumber}`: 'Go to game start';
+          const boldButton = move === this.state.currentStepNumber ? 'button-highlight' : ''
           return (
               <li key={move}>
-                  <button onClick={() => this.jumpTo(move)}>
-                      {desc}
+                  <button className={`${boldButton}`} onClick={() => this.jumpTo(move)}>
+                      {`${desc} ${rowColText}`}
                   </button>
               </li>
           )
@@ -128,6 +139,8 @@ function Square(props){
           </div>
           <div className="game-info">
             <div>{status}</div>
+            <button className="button" onClick={() => this.sortMoves()}>Sort moves</button>
+            <button className="button" onClick={() => this.newGame()}>New Game</button>
             <ol>{moves}</ol>
           </div>
         </div>
